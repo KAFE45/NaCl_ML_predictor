@@ -1,62 +1,63 @@
-from datetime import datetime
 from pathlib import Path
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 
-def save_dataset(df, folder, filename, cols):
-    folder.mkdir(exist_ok=True)
-    df_out = df[[c for c in cols if c in df.columns]]
-    path = folder / filename
-    df_out.to_csv(path, index=False, encoding="utf-8-sig")
-    return path
+def prepare_dataset(input_file):
 
+    df = pd.read_csv(input_file)
 
-def clean_experimental_data(input_path):
+    # -------------------
+    # Feature Engineering
+    # -------------------
+    df["EC_Temp"] = df["EC_M02"] * df["Temp_M02"]
 
-    df = pd.read_excel(input_path, header=[0, 1], engine="openpyxl")
+    # -------------------
+    # Define X and y
+    # -------------------
+    y = df["NaCl_Percent"]
 
-    cols = list(df.columns)
-    for i, n in enumerate(["NaCl_Percent", "model_group", "Variable"]):
-        cols[i] = (n, "")
-    df.columns = pd.MultiIndex.from_tuples(cols)
+    X = df[
+        [
+            "EC_M02",
+            "Temp_M02",
+            "Target_Temp",
+            "Mercury_Temp",
+            "EC_Temp",
+        ]
+    ]
 
-    df.iloc[:, :3] = df.iloc[:, :3].ffill()
-
-    df = df.melt(id_vars=df.columns[:3].tolist())
-    df.columns = ["NaCl_Percent","model_group","Variable","Target_Temp","Rep","Value"]
-
-    df["Target_Temp"] = df["Target_Temp"].astype(str).str.replace("°C","",regex=False).str.strip()
-    df = df[pd.to_numeric(df["Target_Temp"], errors="coerce").notnull()].dropna(subset=["Value"])
-
-    df = (
-        df.pivot_table(
-            index=["NaCl_Percent","Target_Temp","Rep"],
-            columns="Variable",
-            values="Value",
-            aggfunc="first",
-        )
-        .reset_index()
+    # -------------------
+    # Train/Test split
+    # -------------------
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.20,
+        random_state=42
     )
 
-    df.columns.name = None
-    df = df.apply(pd.to_numeric, errors="coerce")
-    df = df.sort_values(["NaCl_Percent","Target_Temp","Rep"]).reset_index(drop=True)
+    # -------------------
+    # Save dataset
+    # -------------------
+    input_path = Path(input_file)
+    data_dir = input_path.parent.parent
 
-    input_path = Path(input_path)
-    data_dir = input_path.parent
-    ts = datetime.now().strftime("%Y%m%d_%H%M")
+    out_dir = data_dir / "DATA_ANALYSIS"
+    out_dir.mkdir(exist_ok=True)
 
-    full_cols = ["NaCl_Percent","Target_Temp","Rep","Mercury_Temp","Temp_M01","EC_M01","Temp_M02","EC_M02"]
-    cut_cols  = ["NaCl_Percent","Target_Temp","Rep","Mercury_Temp","Temp_M02","EC_M02"]
+    X_train.to_csv(out_dir / "X_train.csv", index=False)
+    X_test.to_csv(out_dir / "X_test.csv", index=False)
 
-    full_path = save_dataset(df, data_dir/"RAW_FULL", f"data_RAW_FULL_{ts}.csv", full_cols)
-    cut_path  = save_dataset(df, data_dir/"RAW_CUT",  f"data_RAW_CUT_{ts}.csv",  cut_cols)
+    y_train.to_csv(out_dir / "y_train.csv", index=False)
+    y_test.to_csv(out_dir / "y_test.csv", index=False)
 
-    print("✅ Save complete")
-    print(full_path)
-    print(cut_path)
-
+    print("✅ Data prepared for ML models")
+    print("Train size:", len(X_train))
+    print("Test size:", len(X_test))
 
 if __name__ == "__main__":
-    INPUT_FILE = r"D:\NaCl_ML_predictor\data\data_RAW.xlsx"
-    clean_experimental_data(INPUT_FILE)
+
+    INPUT_FILE = r"D:\NaCl_ML_predictor\data\RAW_CUT\data_RAW_CUT_20260305_1553.csv"
+
+    prepare_dataset(INPUT_FILE)
