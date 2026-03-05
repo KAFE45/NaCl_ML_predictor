@@ -1,6 +1,6 @@
 # 🌊 ทำนายความเข้มข้นของโซเดียมคลอไรด์ (%NaCl) ด้วย Machine Learning
 
-[![Status](https://img.shields.io/badge/Status-Proof%20of%20Concept%20(PoC)-blue)]()
+[![Status](https://img.shields.io/badge/Status-Randomf%20Forest%20Regressor%20(PoC)-blue)]()
 [![Model](https://img.shields.io/badge/Models-Random%20Forest%20%7C%20ANN-orange)]()
 
 ## 📌 ภาพรวมของโปรเจกต์ (Project Overview)
