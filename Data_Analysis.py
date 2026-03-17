@@ -8,7 +8,7 @@ from sklearn.metrics import mean_absolute_error, r2_score
 import seaborn as sns
 
 # 1. โหลดข้อมูล
-file_path = r"D:\NaCl_ML_predictor\data\data_CLEANED_ML_Ready.csv"
+file_path = r"D:\NaCl_ML_predictor\data\RAW_CUT\data_RAW_CUT_20260309_1430.csv"
 df = pd.read_csv(file_path)
 
 # 🌟 สลับมาโฟกัสที่ M02 เพราะข้อมูลสมบูรณ์กว่า
