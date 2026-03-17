@@ -8,7 +8,7 @@ import re
 # CONFIG
 # =============================================================================
 EXCEL_FILE = Path(r"D:\NaCl_ML_predictor\data\data_RAW.xlsx")
-CSV_FILE   = Path(r"D:\NaCl_ML_predictor\data\20260211_ChemMeter_phase1_dataset(Sheet1).csv")
+CSV_FILE   = Path(r"D:\NaCl_ML_predictor\data\20260211_ChemMeter_phase1_dataset.csv")
 OUT_DIR    = Path(r"D:\NaCl_ML_predictor\data\MERGED")
 
 MODEL_MAP = {

@@ -13,6 +13,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from pathlib import Path
+from datetime import datetime
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
@@ -22,7 +23,7 @@ from sklearn.linear_model import LinearRegression
 # ⚙️  CONFIGURATION — แก้ไขที่นี่ที่เดียว
 # =============================================================================
 
-INPUT_FILE = Path(r"D:\NaCl_ML_predictor\data\MERGED\data_MERGED_20260316_1436.csv")
+INPUT_FILE = Path(r"D:\NaCl_ML_predictor\data\MERGED\data_MERGED_20260317_1355.csv")
 
 # Feature columns (ต้องตรงกับที่อยู่ใน CSV ต้นฉบับ + EC_Temp ที่สร้างใหม่)
 # FEATURE_COLS = [
@@ -361,12 +362,12 @@ def visualise(y_test, y_pred, metrics: dict,
     ax2.grid(axis="x", linestyle="--", linewidth=0.5, alpha=0.5)
     ax2.spines[["top", "right"]].set_visible(False)
 
-    plt.suptitle("Random Forest — NaCl Concentration Predictor",
+    plt.suptitle("Random Forest — NaCl Concentration Predictor 005 ",
                  fontsize=14, fontweight="bold", y=1.01)
 
     plt.tight_layout()
 
-    plot_path = out_dir / "rf_results.png"
+    plot_path = out_dir / f"rf_results005_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
     plt.savefig(plot_path, dpi=150, bbox_inches="tight")
     plt.show()
     print(f"\n  ✔ กราฟบันทึกที่ : {plot_path}")
@@ -397,8 +398,8 @@ def inference_example(model_low_path: Path, model_high_path: Path,
     TEMP_THRESHOLD = 50.0
 
     # 1. รับค่า RAW จาก sensor
-    sensor_ec   = 1276
-    sensor_temp = 5984
+    sensor_ec   = 1201
+    sensor_temp = 6214
 
     # 2. แปลง RAW → °C
     temp_c = sensor_temp / 100
@@ -472,19 +473,19 @@ if __name__ == "__main__":
     print("     rf_results.png  |  rf_model_low_temp.joblib  |  rf_model_high_temp.joblib")
     print("=" * 62)
 
-df = pd.read_csv(r"D:\NaCl_ML_predictor\data\MERGED\data_MERGED_20260316_1436.csv")
-print("📊 จำนวนข้อมูลแยกตาม NaCl × Temp (Mercury_Temp > 50°C):")
-high = df[df["Mercury_Temp"] > 50]
-print(f"  แถวทั้งหมดที่ Temp > 50°C : {len(high):,} แถว")
-print(f"  แถวทั้งหมดที่ Temp ≤ 50°C : {len(df) - len(high):,} แถว")
+# df = pd.read_csv(r"D:\NaCl_ML_predictor\data\MERGED\data_MERGED_20260317_1355.csv")
+# print("📊 จำนวนข้อมูลแยกตาม NaCl × Temp (Mercury_Temp > 50°C):")
+# high = df[df["Mercury_Temp"] > 50]
+# print(f"  แถวทั้งหมดที่ Temp > 50°C : {len(high):,} แถว")
+# print(f"  แถวทั้งหมดที่ Temp ≤ 50°C : {len(df) - len(high):,} แถว")
 
-print("\n📊 NaCl distribution ใน high temp zone:")
-print(high["NaCl_Percent"].value_counts().sort_index())
+# print("\n📊 NaCl distribution ใน high temp zone:")
+# print(high["NaCl_Percent"].value_counts().sort_index())
 
-print("\n📊 EC_M02 ที่ NaCl=1.9% และ Temp>50°C:")
-subset = df[(df["NaCl_Percent"] == 1.9) & (df["Mercury_Temp"] > 50)]
-print(subset[["Mercury_Temp", "EC_M02", "NaCl_Percent"]].to_string())
+# print("\n📊 EC_M02 ที่ NaCl=1.9% และ Temp>50°C:")
+# subset = df[(df["NaCl_Percent"] == 1.9) & (df["Mercury_Temp"] > 50)]
+# print(subset[["Mercury_Temp", "EC_M02", "NaCl_Percent"]].to_string())
 
-print("\n📊 EC_M02 ที่ใกล้เคียง sensor_ec=1276 และ Temp>50°C:")
-subset2 = df[(df["EC_M02"].between(1200, 1350)) & (df["Mercury_Temp"] > 50)]
-print(subset2[["Mercury_Temp", "EC_M02", "NaCl_Percent"]].sort_values("Mercury_Temp").to_string())
+# print("\n📊 EC_M02 ที่ใกล้เคียง sensor_ec=1276 และ Temp>50°C:")
+# subset2 = df[(df["EC_M02"].between(1200, 1350)) & (df["Mercury_Temp"] > 50)]
+# print(subset2[["Mercury_Temp", "EC_M02", "NaCl_Percent"]].sort_values("Mercury_Temp").to_string())

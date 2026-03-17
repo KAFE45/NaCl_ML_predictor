@@ -8,6 +8,8 @@
 #   PART 4 : Model Saving + Inference Example
 # =============================================================================
 
+from datetime import datetime
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -22,7 +24,7 @@ from sklearn.linear_model import LinearRegression
 # ⚙️  CONFIGURATION — แก้ไขที่นี่ที่เดียว
 # =============================================================================
 
-INPUT_FILE = Path(r"D:\NaCl_ML_predictor\data\MERGED\data_MERGED_20260316_1436.csv")
+INPUT_FILE = Path(r"D:\NaCl_ML_predictor\data\MERGED\data_MERGED_20260317_1355.csv")
 
 # Feature columns (ต้องตรงกับที่อยู่ใน CSV ต้นฉบับ + EC_Temp ที่สร้างใหม่)
 # FEATURE_COLS = [
@@ -339,12 +341,12 @@ def visualise(y_test, y_pred, metrics: dict,
     ax2.grid(axis="x", linestyle="--", linewidth=0.5, alpha=0.5)
     ax2.spines[["top", "right"]].set_visible(False)
 
-    plt.suptitle("Random Forest — NaCl Concentration Predictor",
+    plt.suptitle("Random Forest — NaCl Concentration Predictor 004 ",
                  fontsize=14, fontweight="bold", y=1.01)
 
     plt.tight_layout()
 
-    plot_path = out_dir / "rf_results.png"
+    plot_path = out_dir / f"rf_results_004_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
     plt.savefig(plot_path, dpi=150, bbox_inches="tight")
     plt.show()
     print(f"\n  ✔ กราฟบันทึกที่ : {plot_path}")
